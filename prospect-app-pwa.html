@@ -475,13 +475,6 @@
     <input type="file" id="jsonInput" accept=".json" style="display:none;" onchange="handleJSONImport(event)">
 
     <script>
-        // Données initiales
-        const initialData = [
-            { id: 1, nom: 'Agence Ardèche Sud', type: 'Agence', zone: 'Aubénas', ville: 'Aubénas', telephone: '04 75 35 97 77', codePostal: '07200', adresse: '', siteWeb: '', nomContact: '', fonction: '', statut: 'Fermé', notes: 'TOP 10' },
-            { id: 2, nom: 'Immo de France', type: 'Agence', zone: 'Aubénas', ville: 'Saint Didier', telephone: '04 75 93 33 50', codePostal: '07200', adresse: '', siteWeb: '', nomContact: '', fonction: '', statut: 'À contacter', notes: '' },
-            { id: 3, nom: 'Thomas Immobilier', type: 'Agence', zone: 'Aubénas', ville: 'Aubénas', telephone: '04 26 62 45 14', codePostal: '07200', adresse: '', siteWeb: '', nomContact: '', fonction: '', statut: 'À contacter', notes: '' },
-        ];
-
         let prospects = [];
         let editingId = null;
         let deferredPrompt = null;
@@ -529,9 +522,9 @@
                         updateFilters();
                         render();
                     })
-                    .catch(() => {
-                        // Fallback aux données initiales
-                        prospects = initialData;
+                    .catch(err => {
+                        console.error('Erreur chargement prospects:', err);
+                        prospects = [];
                         updateFilters();
                         render();
                     });
