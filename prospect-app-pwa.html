@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Prospects">
+    <meta name="theme-color" content="#5F6E6E">
+    <meta name="description" content="Gestionnaire de prospects - Appels, SMS, Emails directs">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23F0EEE9' width='180' height='180'/><text x='50%' y='50%' font-size='80' font-weight='bold' fill='%235F6E6E' text-anchor='middle' dominant-baseline='middle'>📞</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%235F6E6E' width='100' height='100'/><text x='50%' y='50%' font-size='60' fill='%23F0EEE9' text-anchor='middle' dominant-baseline='middle'>📞</text></svg>">
+    <title>Gestionnaire de Prospects</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #F0EEE9;
+            --color-secondary: #D9CFC3;
+            --color-tertiary: #E8DFCE;
+            --color-accent: #8B6F63;
+            --color-accent-light: #C8A89F;
+            --color-text-dark: #5F6E6E;
+            --color-text-light: #9B8F88;
+            --color-border: #EBE6DE;
+            --color-action: #A89A92;
+            --color-hover: #F5F2ED;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+            background: var(--color-primary);
+            color: var(--color-text-dark);
+            letter-spacing: 0.3px;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            padding-top: max(env(safe-area-inset-top), 10px);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 40px 20px;
+            border-bottom: 2px solid var(--color-border);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: var(--color-text-dark);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            font-size: 11px;
+            color: var(--color-text-light);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .controls {
+            background: white;
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 0;
+            margin-bottom: 20px;
+            border: none;
+            border-bottom: 2px solid var(--color-border);
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            background: transparent;
+            color: var(--color-text-dark);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-bottom-color: var(--color-text-dark);
+        }
+
+        .search-box::placeholder {
+            color: var(--color-text-light);
+            letter-spacing: 1px;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .filters {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        select {
+            padding: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--color-border);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.8px;
+            background: transparent;
+            color: var(--color-text-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        select:focus {
+            outline: none;
+            border-bottom-color: var(--color-text-dark);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        button {
+            padding: 10px 0;
+            border: none;
+            border-bottom: 2px solid var(--color-border);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: var(--color-text-dark);
+            text-transform: uppercase;
+            flex: 1;
+            min-width: 60px;
+        }
+
+        button:active {
+            opacity: 0.7;
+        }
+
+        .prospects-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1px;
+            background: var(--color-border);
+        }
+
+        .prospect-card {
+            background: white;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .prospect-card:active {
+            background: var(--color-hover);
+        }
+
+        .prospect-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .prospect-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--color-text-dark);
+        }
+
+        .prospect-subtitle {
+            font-size: 11px;
+            color: var(--color-text-light);
+            margin-top: 2px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 1px;
+            font-size: 10px;
+            font-weight: 500;
+            background: var(--color-secondary);
+            color: var(--color-text-dark);
+            margin-top: 8px;
+        }
+
+        .prospect-details {
+            font-size: 12px;
+            color: var(--color-text-light);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .prospect-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px;
+            border: 1px solid var(--color-border);
+            border-radius: 2px;
+            background: white;
+            color: var(--color-text-dark);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:active {
+            background: var(--color-primary);
+        }
+
+        .form-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 16px;
+            padding-top: max(env(safe-area-inset-top), 16px);
+        }
+
+        .form-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-content {
+            background: white;
+            padding: 28px;
+            max-width: 500px;
+            width: 100%;
+            border-radius: 2px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .form-content h2 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: 1.5px;
+            color: var(--color-text-dark);
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            color: var(--color-text-dark);
+            text-transform: uppercase;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--color-border);
+            border-radius: 2px;
+            font-size: 13px;
+            font-family: inherit;
+            background: white;
+            color: var(--color-text-dark);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            background: var(--color-primary);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .form-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 2px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            cursor: pointer;
+            background: white;
+            color: var(--color-text-dark);
+        }
+
+        .form-btn-primary {
+            background: var(--color-accent);
+            color: white;
+            border-color: var(--color-accent);
+        }
+
+        .empty-state {
+            background: white;
+            padding: 40px;
+            text-align: center;
+            color: var(--color-text-light);
+        }
+
+        .stats {
+            font-size: 10px;
+            color: var(--color-text-light);
+            margin-top: 12px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .install-banner {
+            background: var(--color-secondary);
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--color-text-dark);
+            border-bottom: 1px solid var(--color-border);
+            letter-spacing: 0.5px;
+        }
+
+        .install-banner button {
+            margin-left: 8px;
+            padding: 2px 8px;
+            font-size: 9px;
+            border: 1px solid var(--color-text-dark);
+        }
+    </style>
+</head>
+<body>
+    <div id="installBanner" class="install-banner" style="display:none;">
+        📱 Ajouter à l'écran d'accueil <button onclick="installApp()">Installer</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>PROSPECTS</h1>
+            <p>Gestionnaire de Démarchage Téléphonique</p>
+        </div>
+
+        <div class="controls">
+            <input type="text" id="search" class="search-box" placeholder="Recherche • Nom • Tél • Ville">
+
+            <div class="filters">
+                <select id="filterZone">
+                    <option value="">Toutes zones</option>
+                </select>
+                <select id="filterStatus">
+                    <option value="">Tous statuts</option>
+                    <option value="À contacter">À contacter</option>
+                    <option value="Contacté">Contacté</option>
+                    <option value="Fermé">Fermé</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button onclick="showAddForm()">➕ Ajouter</button>
+                <button onclick="exportCSV()">📥 Export</button>
+                <button onclick="importJSON()">📤 Import</button>
+            </div>
+
+            <div class="stats">
+                <span id="countDisplay">Chargement...</span>
+            </div>
+        </div>
+
+        <div id="prospectsList" class="prospects-list">
+            <div class="empty-state">Chargement...</div>
+        </div>
+    </div>
+
+    <div id="formModal" class="form-modal">
+        <div class="form-content">
+            <h2 id="formTitle">Ajouter Contact</h2>
+            <form onsubmit="saveProspect(event)">
+                <div class="form-group">
+                    <label>Nom *</label>
+                    <input type="text" id="formNom" required>
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="tel" id="formTelephone">
+                </div>
+                <div class="form-group">
+                    <label>Ville</label>
+                    <input type="text" id="formVille">
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <input type="text" id="formType">
+                </div>
+                <div class="form-group">
+                    <label>Zone</label>
+                    <input type="text" id="formZone">
+                </div>
+                <div class="form-group">
+                    <label>Contact</label>
+                    <input type="text" id="formNomContact">
+                </div>
+                <div class="form-group">
+                    <label>Statut</label>
+                    <select id="formStatut">
+                        <option value="À contacter">À contacter</option>
+                        <option value="Contacté">Contacté</option>
+                        <option value="Fermé">Fermé</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="formNotes"></textarea>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="form-btn" onclick="closeForm()">Annuler</button>
+                    <button type="submit" class="form-btn form-btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <input type="file" id="jsonInput" accept=".json" style="display:none;" onchange="handleJSONImport(event)">
+
+    <script>
+        // Données initiales
+        const initialData = [
+            { id: 1, nom: 'Agence Ardèche Sud', type: 'Agence', zone: 'Aubénas', ville: 'Aubénas', telephone: '04 75 35 97 77', codePostal: '07200', adresse: '', siteWeb: '', nomContact: '', fonction: '', statut: 'Fermé', notes: 'TOP 10' },
+            { id: 2, nom: 'Immo de France', type: 'Agence', zone: 'Aubénas', ville: 'Saint Didier', telephone: '04 75 93 33 50', codePostal: '07200', adresse: '', siteWeb: '', nomContact: '', fonction: '', statut: 'À contacter', notes: '' },
+            { id: 3, nom: 'Thomas Immobilier', type: 'Agence', zone: 'Aubénas', ville: 'Aubénas', telephone: '04 26 62 45 14', codePostal: '07200', adresse: '', siteWeb: '', nomContact: '', fonction: '', statut: 'À contacter', notes: '' },
+        ];
+
+        let prospects = [];
+        let editingId = null;
+        let deferredPrompt = null;
+
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(reg => console.log('✓ Service Worker enregistré'))
+                .catch(err => console.log('Service Worker erreur:', err));
+        }
+
+        // Installation PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBanner').style.display = 'block';
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(choice => {
+                    if (choice.outcome === 'accepted') {
+                        deferredPrompt = null;
+                        document.getElementById('installBanner').style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // Init
+        function init() {
+            const saved = localStorage.getItem('prospects');
+            prospects = saved ? JSON.parse(saved) : initialData;
+            updateFilters();
+            render();
+        }
+
+        function updateFilters() {
+            const zones = [...new Set(prospects.map(p => p.zone).filter(Boolean))];
+            const zoneSelect = document.getElementById('filterZone');
+            const currentZone = zoneSelect.value;
+            zoneSelect.innerHTML = '<option value="">Toutes zones</option>';
+            zones.forEach(z => {
+                const option = document.createElement('option');
+                option.value = z;
+                option.textContent = z;
+                zoneSelect.appendChild(option);
+            });
+            zoneSelect.value = currentZone;
+        }
+
+        function save() {
+            localStorage.setItem('prospects', JSON.stringify(prospects));
+            updateFilters();
+        }
+
+        function render() {
+            const search = document.getElementById('search').value.toLowerCase();
+            const zone = document.getElementById('filterZone').value;
+            const status = document.getElementById('filterStatus').value;
+
+            const filtered = prospects.filter(p => {
+                const matchSearch = !search || p.nom.toLowerCase().includes(search) ||
+                    p.telephone.includes(search) || p.ville.toLowerCase().includes(search);
+                const matchZone = !zone || p.zone === zone;
+                const matchStatus = !status || p.statut === status;
+                return matchSearch && matchZone && matchStatus;
+            });
+
+            const list = document.getElementById('prospectsList');
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state">Aucun prospect</div>';
+            } else {
+                list.innerHTML = filtered.map(p => `
+                    <div class="prospect-card">
+                        <div class="prospect-header">
+                            <div>
+                                <div class="prospect-title">${p.nom}</div>
+                                <div class="prospect-subtitle">${p.ville || ''}${p.codePostal ? ' (' + p.codePostal + ')' : ''}</div>
+                                <span class="status-badge">${p.statut}</span>
+                            </div>
+                            <div style="display:flex; gap:4px;">
+                                <button class="action-btn" style="border:none; width:28px; padding:4px;" onclick="editProspect(${p.id})">✏️</button>
+                                <button class="action-btn" style="border:none; width:28px; padding:4px;" onclick="deleteProspect(${p.id})">✕</button>
+                            </div>
+                        </div>
+                        <div class="prospect-details">
+                            ${p.telephone ? '<div>📞 ' + p.telephone + '</div>' : ''}
+                            ${p.nomContact ? '<div>👤 ' + p.nomContact + '</div>' : ''}
+                        </div>
+                        <div class="prospect-actions">
+                            ${p.telephone ? `
+                                <button class="action-btn" onclick="call('${p.telephone}')">📞 Appel</button>
+                                <button class="action-btn" onclick="sms('${p.telephone}')">💬 SMS</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('countDisplay').textContent = `${filtered.length}/${prospects.length} prospects`;
+        }
+
+        function call(tel) {
+            window.location.href = `tel:${tel.replace(/\s/g, '')}`;
+        }
+
+        function sms(tel) {
+            window.location.href = `sms:${tel.replace(/\s/g, '')}?body=Bonjour`;
+        }
+
+        function showAddForm() {
+            editingId = null;
+            document.getElementById('formTitle').textContent = 'Ajouter Contact';
+            document.getElementById('formNom').value = '';
+            document.getElementById('formTelephone').value = '';
+            document.getElementById('formVille').value = '';
+            document.getElementById('formType').value = '';
+            document.getElementById('formZone').value = '';
+            document.getElementById('formNomContact').value = '';
+            document.getElementById('formStatut').value = 'À contacter';
+            document.getElementById('formNotes').value = '';
+            document.getElementById('formModal').classList.add('active');
+        }
+
+        function editProspect(id) {
+            const p = prospects.find(x => x.id === id);
+            if (!p) return;
+            editingId = id;
+            document.getElementById('formTitle').textContent = 'Éditer Contact';
+            document.getElementById('formNom').value = p.nom;
+            document.getElementById('formTelephone').value = p.telephone;
+            document.getElementById('formVille').value = p.ville;
+            document.getElementById('formType').value = p.type;
+            document.getElementById('formZone').value = p.zone;
+            document.getElementById('formNomContact').value = p.nomContact;
+            document.getElementById('formStatut').value = p.statut;
+            document.getElementById('formNotes').value = p.notes;
+            document.getElementById('formModal').classList.add('active');
+        }
+
+        function closeForm() {
+            document.getElementById('formModal').classList.remove('active');
+        }
+
+        function saveProspect(e) {
+            e.preventDefault();
+            const data = {
+                nom: document.getElementById('formNom').value,
+                telephone: document.getElementById('formTelephone').value,
+                ville: document.getElementById('formVille').value,
+                type: document.getElementById('formType').value,
+                zone: document.getElementById('formZone').value,
+                nomContact: document.getElementById('formNomContact').value,
+                statut: document.getElementById('formStatut').value,
+                notes: document.getElementById('formNotes').value,
+                codePostal: '', adresse: '', fonction: '', siteWeb: ''
+            };
+
+            if (editingId) {
+                const idx = prospects.findIndex(p => p.id === editingId);
+                if (idx >= 0) prospects[idx] = { ...prospects[idx], ...data };
+            } else {
+                prospects.push({ ...data, id: Date.now() });
+            }
+            save();
+            render();
+            closeForm();
+        }
+
+        function deleteProspect(id) {
+            if (confirm('Supprimer ?')) {
+                prospects = prospects.filter(p => p.id !== id);
+                save();
+                render();
+            }
+        }
+
+        function exportCSV() {
+            const csv = [['Nom', 'Tél', 'Ville', 'Statut']].concat(
+                prospects.map(p => [p.nom, p.telephone, p.ville, p.statut])
+            ).map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+            const a = document.createElement('a');
+            a.href = 'data:text/csv,' + encodeURIComponent(csv);
+            a.download = 'prospects.csv';
+            a.click();
+        }
+
+        function importJSON() {
+            document.getElementById('jsonInput').click();
+        }
+
+        function handleJSONImport(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    prospects = JSON.parse(event.target.result);
+                    save();
+                    render();
+                    alert('✓ Importé');
+                } catch {
+                    alert('✗ Erreur');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        document.getElementById('search').addEventListener('input', render);
+        document.getElementById('filterZone').addEventListener('change', render);
+        document.getElementById('filterStatus').addEventListener('change', render);
+
+        init();
+    </script>
+</body>
+</html>
