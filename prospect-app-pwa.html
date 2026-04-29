@@ -515,9 +515,27 @@
         // Init
         function init() {
             const saved = localStorage.getItem('prospects');
-            prospects = saved ? JSON.parse(saved) : initialData;
-            updateFilters();
-            render();
+            if (saved) {
+                prospects = JSON.parse(saved);
+                updateFilters();
+                render();
+            } else {
+                // Charger depuis le fichier JSON
+                fetch('prospects-data.json')
+                    .then(r => r.json())
+                    .then(data => {
+                        prospects = data;
+                        save();
+                        updateFilters();
+                        render();
+                    })
+                    .catch(() => {
+                        // Fallback aux données initiales
+                        prospects = initialData;
+                        updateFilters();
+                        render();
+                    });
+            }
         }
 
         function updateFilters() {
