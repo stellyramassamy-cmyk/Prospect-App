@@ -221,8 +221,8 @@
 
         .prospect-actions {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
         }
 
         .action-btn {
@@ -587,7 +587,8 @@
                         <div class="prospect-actions">
                             ${p.telephone ? `
                                 <button class="action-btn" onclick="call('${p.telephone}')">📞 Appel</button>
-                                <button class="action-btn" onclick="sms('${p.telephone}')">💬 SMS</button>
+                                <button class="action-btn" onclick="whatsapp('${p.telephone}')">💬 WhatsApp</button>
+                                <button class="action-btn" onclick="sms('${p.telephone}')">📱 SMS</button>
                             ` : ''}
                         </div>
                     </div>
@@ -603,6 +604,11 @@
 
         function sms(tel) {
             window.location.href = `sms:${tel.replace(/\s/g, '')}?body=Bonjour`;
+        }
+
+        function whatsapp(tel) {
+            const cleanTel = tel.replace(/\s/g, '').replace(/^0/, '33');
+            window.location.href = `https://wa.me/${cleanTel}?text=Bonjour`;
         }
 
         function showAddForm() {
