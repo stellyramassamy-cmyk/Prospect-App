@@ -380,6 +380,37 @@
             font-size: 9px;
             border: 1px solid var(--color-text-dark);
         }
+
+        .footer {
+            background: white;
+            padding: 24px 20px;
+            border-top: 2px solid var(--color-border);
+            text-align: center;
+            font-size: 10px;
+            color: var(--color-text-light);
+            letter-spacing: 0.5px;
+            margin-top: 40px;
+        }
+
+        .footer p {
+            margin: 6px 0;
+        }
+
+        .footer a {
+            color: var(--color-accent);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-divider {
+            height: 1px;
+            background: var(--color-border);
+            margin: 12px 0;
+        }
     </style>
 </head>
 <body>
@@ -473,6 +504,17 @@
     </div>
 
     <input type="file" id="jsonInput" accept=".json" style="display:none;" onchange="handleJSONImport(event)">
+
+    <div class="footer">
+        <div class="footer-divider"></div>
+        <p><strong>Gestionnaire de Prospects</strong></p>
+        <p>Créé par <strong>Stelly RAMASSAMY</strong></p>
+        <p>&copy; 2026 Tous droits réservés</p>
+        <p style="margin-top: 12px;">
+            <a href="javascript:alert('Mentions légales:\n\nCe site est une application web progressive (PWA).\n\nLes données sont stockées localement sur votre appareil.\nAucune donnée n\'est envoyée à des serveurs externes.\n\nCréateur: Stelly RAMASSAMY\nDate: 2026\nLicence: Tous droits réservés')">Mentions légales</a> |
+            <a href="javascript:alert('Confidentialité:\n\nVos données de prospects sont stockées localement.\nNous ne collectons aucune donnée personnelle.\nVous avez le contrôle total de vos informations.')">Confidentialité</a>
+        </p>
+    </div>
 
     <script>
         let prospects = [];
