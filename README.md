@@ -1,2 +1,0 @@
-# Prospect-App
-Démarchage téléphonique
